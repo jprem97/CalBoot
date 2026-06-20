@@ -1,40 +1,35 @@
 package com.first.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.first.demo.model.User;
+import com.first.demo.dto.UserRequest;
+import com.first.demo.exception.UserAlreadyFoundException;
 import com.first.demo.service.UserService;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import lombok.AllArgsConstructor;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-
-
 
 @RestController
 @RequestMapping("/user")
-public class UserController{
-    @Autowired
-    private UserService service;
-    // @GetMapping("/")
-    // public String getMethodName() {
-    //     return "Hi from 97";
-    // }
-    @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
-             User ans = service.findUser(user.getEmail()); 
-             if(ans.getName()=="not found")  
-                 ans = service.creaUser(user.getEmail(), user.getPassword());
-             return ans;
+@AllArgsConstructor
+public class UserController {
+    
+    private UserService userService;
 
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserRequest request) {
+        try{
+            userService.register(request);
+            return new ResponseEntity<>("Successfully created user",HttpStatus.OK);
+        }catch(UserAlreadyFoundException e){
+            return new ResponseEntity<>("User already exists",HttpStatus.BAD_REQUEST);
+        }
     }
-    
-    
 
 }
+

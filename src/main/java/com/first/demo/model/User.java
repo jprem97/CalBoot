@@ -29,25 +29,20 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
     private String name;
     private String email;
     private String password;
-
     private Integer age;
     private Double weight;
     private Double height;
-
     private String gender;
-
     @Enumerated(EnumType.STRING)
     private GoalType goal; 
-
     private Integer dailyCalorieGoal;
-
     private LocalDateTime createdAt;
-
-    public User(String name) {
-    this.name = name;
-}
+    
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

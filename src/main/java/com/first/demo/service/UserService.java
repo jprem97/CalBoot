@@ -2,27 +2,28 @@ package com.first.demo.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
+import com.first.demo.dto.UserRequest;
+import com.first.demo.exception.UserAlreadyFoundException;
 import com.first.demo.model.User;
 import com.first.demo.repo.UserRepo;
 
+import lombok.AllArgsConstructor;
+
 @Service
-public class UserService {
+@AllArgsConstructor
+public class UserService{
 
-    @Autowired
-    private UserRepo repo;
+    private UserRepo userRepo;
 
-    public User findUser (String mail){
-           return repo.findByEmail(mail).orElse(new User("not found"));
+    public void register (UserRequest request){
+        Optional<User> user = userRepo.findByEmail(request.getEmail());
+        if(user.isPresent()){
+            throw new UserAlreadyFoundException();
+        }
+        User newUser = new User(request.getEmail(),request.getPassword());
+        userRepo.save(newUser);
     }
-    public User creaUser (String email, String password){
-        User u = new User();
-        u.setEmail(email);
-        u.setPassword(password);
-        repo.save(u);
-        return u;
-    }
-    
 }

@@ -21,18 +21,12 @@ public class ExerciseLog {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
     @ManyToOne
     private User user;
-
     private String exerciseName;
-
     private Integer durationMinutes;
-
     private Double caloriesBurned;
-
     @Column(columnDefinition = "TEXT")
     private String aiAnalysis;
-
     private LocalDateTime loggedAt;
 }

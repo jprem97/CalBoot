@@ -33,23 +33,16 @@ public class FoodLog {
     private String id;
     @ManyToOne
     private User user;
-
     @Enumerated(EnumType.STRING)
     private MealType mealType;
-
     @Column(columnDefinition="TEXT")
     private String userInput;
-
-    private String imageUrl;
-
     private Double calories;
     private Double protein;
     private Double carbs;
     private Double fats;
     private Double fiber;
-
     @Column(columnDefinition = "TEXT")
     private String aiResponse;
-
     private LocalDateTime loggedAt;
 }
