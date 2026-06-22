@@ -1,4 +1,4 @@
-package com.first.demo.model;
+package com.first.demo.entity;
 
 import java.time.LocalDateTime;
 
@@ -40,7 +40,7 @@ public class User {
     private GoalType goal; 
     private Integer dailyCalorieGoal;
     private LocalDateTime createdAt;
-    
+    private String refreshToken;
     public User(String email, String password) {
         this.email = email;
         this.password = password;
