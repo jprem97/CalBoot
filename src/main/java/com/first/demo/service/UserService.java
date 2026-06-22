@@ -34,7 +34,7 @@ public class UserService{
         Optional<User> user = userRepo.findByEmail(request.getEmail());
         if(!user.isPresent()) 
             throw new UserNotFoundException("Not found the user  ...register bro");
-        else if(request.getPassword()!=user.get().getPassword()) 
+        else if(!request.getPassword().equals(user.get().getPassword())) 
             throw new IncorrectPasswordException("worng password");
         return new LoginResponse(request.getEmail(),"refresh-token"); 
     }
