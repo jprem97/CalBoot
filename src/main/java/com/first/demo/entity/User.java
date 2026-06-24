@@ -2,6 +2,8 @@ package com.first.demo.entity;
 
 import java.time.LocalDateTime;
 
+import com.first.demo.GoalType.GoalTypeEnum;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,11 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-enum GoalType {
-    LOSS,
-    MAINTAIN,
-    GAIN
-}
+
 
 
 @Entity
@@ -26,6 +24,7 @@ enum GoalType {
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -37,7 +36,7 @@ public class User {
     private Double height;
     private String gender;
     @Enumerated(EnumType.STRING)
-    private GoalType goal; 
+    private GoalTypeEnum goalType; 
     private Integer dailyCalorieGoal;
     private LocalDateTime createdAt;
     private String refreshToken;

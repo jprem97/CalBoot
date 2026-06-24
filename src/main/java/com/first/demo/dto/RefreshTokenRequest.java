@@ -1,14 +1,13 @@
-package com.first.demo.models;
+package com.first.demo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+@AllArgsConstructor
+public class RefreshTokenRequest {
 
-    private String token;
     private String refreshToken;
 }
