@@ -14,20 +14,13 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
 
     private String name;
-
     private String email;
-
     private String password;
-
     private Integer age;
-
     private Double weight;
-
     private Double height;
-
     private String gender;
 
     @Enumerated(EnumType.STRING)
     private GoalTypeEnum goalType;
-
 }

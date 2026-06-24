@@ -1,9 +1,6 @@
-
 package com.first.demo.entity;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.ManyToOne;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,16 +9,16 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-enum MealType{
-    BREAKFAST,
-    LUNCH,
-    SNACKS,
-    DINNER
+enum MealType {
+    BREAKFAST, LUNCH, SNACKS, DINNER
 }
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -35,7 +32,7 @@ public class FoodLog {
     private User user;
     @Enumerated(EnumType.STRING)
     private MealType mealType;
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String userInput;
     private Double calories;
     private Double protein;

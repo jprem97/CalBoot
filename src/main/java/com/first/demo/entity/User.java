@@ -15,9 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -36,10 +33,11 @@ public class User {
     private Double height;
     private String gender;
     @Enumerated(EnumType.STRING)
-    private GoalTypeEnum goalType; 
+    private GoalTypeEnum goalType;
     private Integer dailyCalorieGoal;
     private LocalDateTime createdAt;
     private String refreshToken;
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;

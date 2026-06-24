@@ -20,116 +20,69 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserRepo userRepo;
-
     private final PasswordEncoder passwordEncoder;
-
     private final jwtService jwtService;
-
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse register(
-            RegisterRequest request) {
-
+    public AuthResponse register(RegisterRequest request) {
         Optional<User> newuser = userRepo.findByEmail(request.getEmail());
         if (newuser.isPresent()) {
             throw new UserAlreadyFoundException();
         }
 
         User user = new User();
-
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         user.setAge(request.getAge());
         user.setWeight(request.getWeight());
         user.setHeight(request.getHeight());
-
         user.setGender(request.getGender());
         user.setGoalType(request.getGoalType());
-
         userRepo.save(user);
 
         String accessToken = jwtService.generateAccessToken(user);
-
         String refreshToken = jwtService.generateRefreshToken(user);
-
         user.setRefreshToken(refreshToken);
-
         userRepo.save(user);
 
-        return new AuthResponse(accessToken,refreshToken);
+        return new AuthResponse(accessToken, refreshToken);
     }
 
     public AuthResponse login(LoginRequest request) {
-
         authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-                new UsernamePasswordAuthenticationToken(
+        User user = userRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-                        request.getEmail(),
-                        request.getPassword()));
-
-        User user = userRepo
-                .findByEmail(
-                        request.getEmail())
-                .orElseThrow(
-                        () -> new RuntimeException(
-                                "User not found"));
-
-        String accessToken = jwtService.generateAccessToken(
-                user);
-
-        String refreshToken = jwtService.generateRefreshToken(
-                user);
-
-        user.setRefreshToken(
-                refreshToken);
-
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        user.setRefreshToken(refreshToken);
         userRepo.save(user);
 
-        return new AuthResponse(
-                accessToken,
-                refreshToken);
+        return new AuthResponse(accessToken, refreshToken);
     }
 
-    public AuthResponse refreshToken(
-            RefreshTokenRequest request) {
-
-        String email = jwtService.extractEmail(
-                request.getRefreshToken());
+    public AuthResponse refreshToken(RefreshTokenRequest request) {
+        String email = jwtService.extractEmail(request.getRefreshToken());
 
         User user = userRepo.findByEmail(email)
-                .orElseThrow(
-                        () -> new RuntimeException(
-                                "User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!request.getRefreshToken()
-                .equals(user.getRefreshToken())) {
-
-            throw new RuntimeException(
-                    "Invalid Refresh Token");
+        if (!request.getRefreshToken().equals(user.getRefreshToken())) {
+            throw new RuntimeException("Invalid Refresh Token");
         }
 
-        String accessToken = jwtService.generateAccessToken(
-                user);
-
-        return new AuthResponse(
-                accessToken,
-                user.getRefreshToken());
+        String accessToken = jwtService.generateAccessToken(user);
+        return new AuthResponse(accessToken, user.getRefreshToken());
     }
 
-    public void logout(
-            String email) {
-
+    public void logout(String email) {
         User user = userRepo.findByEmail(email)
-                .orElseThrow(
-                        () -> new RuntimeException(
-                                "User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setRefreshToken(null);
-
         userRepo.save(user);
     }
 }
