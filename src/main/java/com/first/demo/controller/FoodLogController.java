@@ -27,7 +27,8 @@ public class FoodLogController {
             @RequestBody FoodRequest food) {
 
         FoodLog foodLog = foodLogService.analyseFood(food);
+        String AiResponse = foodLog.toString();
 
-        return ResponseEntity.ok("foodLog");
+        return ResponseEntity.ok(AiResponse);
     }
 }
