@@ -3,6 +3,8 @@ package com.first.demo.service;
 import com.first.demo.dto.*;
 import com.first.demo.entity.User;
 import com.first.demo.exception.UserAlreadyFoundException;
+import com.first.demo.exception.UserNotFoundException;
+import com.first.demo.exception.IncorrectPasswordException;
 import com.first.demo.repo.UserRepo;
 import com.first.demo.security.jwtService;
 
@@ -50,11 +52,15 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (Exception e) {
+            throw new IncorrectPasswordException("Invalid email or password");
+        }
 
         User user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -68,10 +74,10 @@ public class AuthService {
         String email = jwtService.extractEmail(request.getRefreshToken());
 
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!request.getRefreshToken().equals(user.getRefreshToken())) {
-            throw new RuntimeException("Invalid Refresh Token");
+            throw new IncorrectPasswordException("Invalid Refresh Token");
         }
 
         String accessToken = jwtService.generateAccessToken(user);
@@ -80,7 +86,7 @@ public class AuthService {
 
     public void logout(String email) {
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         user.setRefreshToken(null);
         userRepo.save(user);
