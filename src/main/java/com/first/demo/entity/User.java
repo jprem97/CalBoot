@@ -37,9 +37,11 @@ public class User {
     private Integer dailyCalorieGoal;
     private LocalDateTime createdAt;
     private String refreshToken;
+    private String role;
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.role = "ROLE_USER";
     }
 }
