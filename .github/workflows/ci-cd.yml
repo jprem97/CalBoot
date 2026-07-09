@@ -10,12 +10,11 @@
 name: Build and Deploy
 
 # ----------------------------------------------------------
-# Trigger: Runs automatically when code is pushed to 'main'
+# Trigger: Manual triggering 
 # ----------------------------------------------------------
+
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 # ----------------------------------------------------------
 # Environment variables used across all jobs
