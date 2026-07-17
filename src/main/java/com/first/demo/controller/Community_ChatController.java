@@ -27,7 +27,7 @@ public class Community_ChatController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/send")
     public ResponseEntity<?> saveChat(@RequestBody ChatMessage message) {
         try {
             chatService.saveChats(message);
