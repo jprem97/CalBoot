@@ -17,7 +17,7 @@ public class Community_ChatController {
 
     private final ChatService chatService;
 
-    @GetMapping
+    @GetMapping("/c")
     public ResponseEntity<?> getChats() {
         try {
             List<ChatMessage> chats = chatService.getChats();
