@@ -2,48 +2,40 @@ package com.first.demo.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
 import com.first.demo.entity.ChatMessage;
 import com.first.demo.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
-@RequestMapping("/api/chats")
+
+@Controller
 @RequiredArgsConstructor
 public class Community_ChatController {
 
     private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @GetMapping("/c")
-    public ResponseEntity<?> getChats() {
-        try {
-            List<ChatMessage> chats = chatService.getChats();
-            return ResponseEntity.ok(chats);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @MessageMapping("/chat.send")
+    public void sendMessage(ChatMessage message) {
+        System.out.println(message);
+        chatService.saveChats(message);
+        messagingTemplate.convertAndSend("/topic/messages", message);
     }
+    @GetMapping("/getchats")
+    public ResponseEntity<?> getMethodName() {
+         List<ChatMessage> chats=chatService.getChats();
+         return new ResponseEntity<>(chats,HttpStatus.OK);
 
-    @PostMapping("/send")
-    public ResponseEntity<?> saveChat(@RequestBody ChatMessage message) {
-        try {
-            chatService.saveChats(message);
-            return ResponseEntity.ok("Chat saved successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+         
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteChat(@PathVariable String id) {
-        try {
-            chatService.deleteChats(id);
-            return ResponseEntity.ok("Chat deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+    
 }

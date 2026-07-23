@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat Test</title>
+    <script src="/stomp.min.js"></script>
+</head>
+<body>
+    <h3>WebSocket Chat Test</h3>
+    <div>
+        <input id="email" placeholder="Email" value="test@test.com" />
+        <input id="msg" placeholder="Message" />
+        <button onclick="send()">Send</button>
+    </div>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <p>Status: <span id="status">Disconnected</span></p>
+    <hr>
+    <div id="log"></div>
+
+    <script>
+        let stompClient = null;
+
+        function log(text) {
+            document.getElementById('log').innerHTML += '<p>' + text + '</p>';
+        }
+
+        function connect() {
+            if (typeof StompJs === 'undefined') {
+                log('ERROR: stomp.min.js failed to load.');
+                return;
+            }
+
+            stompClient = new StompJs.Client({
+                brokerURL: 'ws://localhost:8081/ws',
+                reconnectDelay: 5000,
+                onConnect: () => {
+                    document.getElementById('status').textContent = 'Connected';
+                    log('Connected to server');
+                    stompClient.subscribe('/topic/messages', (msg) => {
+                        const m = JSON.parse(msg.body);
+                        log('<b>' + m.senderEmail + ':</b> ' + m.message);
+                    });
+                    log('Subscribed to /topic/messages');
+                    loadChats();
+                },
+                onDisconnect: () => {
+                    document.getElementById('status').textContent = 'Disconnected';
+                    log('Disconnected from server');
+                },
+                onStompError: (frame) => {
+                    log('STOMP Error: ' + frame.headers['message']);
+                },
+                onWebSocketError: (evt) => {
+                    document.getElementById('status').textContent = 'Error';
+                    log('WebSocket Error: ' + evt);
+                }
+            });
+            stompClient.activate();
+        }
+
+        function disconnect() {
+            if (stompClient) stompClient.deactivate();
+        }
+
+        function loadChats() {
+            fetch('/getchats')
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.json();
+                })
+                .then(chats => {
+                    if (chats.length === 0) {
+                        log('No chats found.');
+                        return;
+                    }
+                    log('<b>--- All Chats (' + chats.length + ') ---</b>');
+                    chats.reverse().forEach(chat => {
+                        const time = chat.timestamp ? new Date(chat.timestamp).toLocaleString() : 'N/A';
+                        log('[' + time + '] <b>' + chat.senderEmail + ':</b> ' + chat.message);
+                    });
+                })
+                .catch(err => {
+                    log('Failed to load chats: ' + err.message);
+                });
+        }
+
+        function send() {
+            if (!stompClient || !stompClient.connected) {
+                log('Not connected! Click Connect first.');
+                return;
+            }
+            stompClient.publish({
+                destination: '/app/chat.send',
+                body: JSON.stringify({
+                    senderEmail: document.getElementById('email').value,
+                    message: document.getElementById('msg').value
+                })
+            });
+            
+        }
+    </script>
+</body>
+</html>
