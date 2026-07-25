@@ -36,3 +36,4 @@ build/
 application.properties
 application-*.properties
 .env
+Todo.txt 
