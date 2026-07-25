@@ -16,10 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-enum MealType {
-    BREAKFAST, LUNCH, SNACKS, DINNER
-}
-
 @Entity
 @Data
 @AllArgsConstructor
