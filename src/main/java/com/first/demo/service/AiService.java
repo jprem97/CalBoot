@@ -28,8 +28,11 @@ public class AiService {
 
     public String askAI(String food) {
         try {
-            String prompt = "You are a nutrition expert. Analyze the following food. Return ONLY valid JSON: " +
-                    "{\"calories\": 0, \"protein\": 0, \"carbs\": 0, \"fats\": 0, \"fiber\": 0} Food: " + food;
+            String prompt = "You are a nutrition expert. Analyze the following food item and provide nutritional information per serving. " +
+                    "Return ONLY valid JSON with these exact fields (all values must be numbers, not strings): " +
+                    "{\"calories\": number, \"protein\": number, \"carbs\": number, \"fats\": number, \"fiber\": number} " +
+                    "Example: For '1 cup of rice', return {\"calories\": 206, \"protein\": 4.3, \"carbs\": 44.5, \"fats\": 0.4, \"fiber\": 0.6} " +
+                    "Food: " + food;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);

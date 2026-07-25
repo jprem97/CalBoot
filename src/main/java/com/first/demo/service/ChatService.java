@@ -25,14 +25,13 @@ public class ChatService {
         //    if(s==null) throw new ChatErrorException("can't save the chat ");
         
         }
-    
-        public void deleteChats(String id ){
+            public void deleteChats(String id ){
             ChatMessage m =chatRepo.removeById(id);
             if(m==null) throw new ChatErrorException("can't save the chat");
     
         }
-        public List<ChatMessage> getChats(){
-            Pageable pageable = PageRequest.of(0, 100,Sort.by("timestamp").descending());
+        public List<ChatMessage> getChats(int page ){
+            Pageable pageable = PageRequest.of(page, 10,Sort.by("timestamp").descending());
             Page<ChatMessage> chats = chatRepo.findAll(pageable);
             if(chats.isEmpty()) throw new ChatErrorException("can't fetch the chats");
             return chats.getContent();

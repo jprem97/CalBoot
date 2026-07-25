@@ -52,6 +52,9 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+
+        User user = userRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -59,8 +62,7 @@ public class AuthService {
             throw new IncorrectPasswordException("Invalid email or password");
         }
 
-        User user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);

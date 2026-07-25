@@ -14,6 +14,9 @@ import com.first.demo.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -30,12 +33,20 @@ public class Community_ChatController {
         chatService.saveChats(message);
         messagingTemplate.convertAndSend("/topic/messages", message);
     }
-    @GetMapping("/getchats")
-    public ResponseEntity<?> getMethodName() {
-         List<ChatMessage> chats=chatService.getChats();
-         return new ResponseEntity<>(chats,HttpStatus.OK);
 
+    
+    @GetMapping("/getchats")
+    
+    public ResponseEntity<?> getMethodName(@RequestParam int page) {
+         try {
+            List<ChatMessage> chats=chatService.getChats(page);
+            return new ResponseEntity<>(chats,HttpStatus.OK);
+   
+         } catch (Exception e) {
+            return new ResponseEntity<>("no more chats",HttpStatus.BAD_REQUEST);
+         }
          
     }
+    
     
 }
