@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.first.demo.dto.AiReq;
 import com.first.demo.dto.FoodLogResponse;
 import com.first.demo.dto.FoodRequest;
 import com.first.demo.entity.FoodLog;
@@ -27,27 +27,18 @@ public class FoodLogService {
 
     public FoodLog analyseFood(FoodRequest food) {
 
-        String aiResponse = aiService.askAI(food.getFood());
+        AiReq aiReq = new AiReq("food", food.getFood());
+
+        String rawResponse = aiService.callAiApi(aiReq);
+
+        String content = aiService.parseResponse(rawResponse);
 
         try {
-            JsonNode root = objectMapper.readTree(aiResponse);
-
-            String content = root.path("choices")
-                    .get(0)
-                    .path("message")
-                    .path("content")
-                    .asText();
-
-            content = content.replaceAll("```json\\s*", "")
-                    .replaceAll("```\\s*", "")
-                    .trim();
-
             FoodLog foodLog = objectMapper.readValue(content, FoodLog.class);
-
             return foodLogRepository.save(foodLog);
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse AI response", e);
+            throw new RuntimeException("Failed to parse AI response into FoodLog", e);
         }
     }
 
