@@ -36,4 +36,5 @@ build/
 application.properties
 application-*.properties
 .env
-Todo.txt 
+Todo.txt
+src/main/resources/static/test.html
